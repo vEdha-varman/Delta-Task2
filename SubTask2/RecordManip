@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# if [[ $#==0 ]]; then echo "Enter a no. in [1-7]: ";
+# else
+
+tdow=`date +"%u"`
+dow=`expr 7 + $tdow - $1`
+
+Date=`date -I -d "-$dow day"`
+
+loc_file=$(locate attendance.log)
+
+user=`whoami`
+
+echo "\n$Date:"
+if [ X"$user" = X"ArmyGeneral" ]
+then
+	grep -i "$Date.* Army" "$loc_file" | awk '{print "\t"$2,$3}'
+elif [ X"$user" = X"NavyMarshal" ]
+then
+	grep -i "$Date.* Navy" "$loc_file" | awk '{print "\t"$2,$3}'
+elif [ X"$user" = X"AirForceChief" ]
+then
+	grep -i "$Date.* AirForce" "$loc_file" | awk '{print "\t"$2,$3}'
+else
+	# echo "Invalid User $user"
+	grep -i "$Date.* Army" "$loc_file" | awk '{print "\t"$2,$3}'
+	grep -i "$Date.* Navy" "$loc_file" | awk '{print "\t"$2,$3}'
+	grep -i "$Date.* AirForce" "$loc_file" | awk '{print "\t"$2,$3}'
+fi
+
+# fi

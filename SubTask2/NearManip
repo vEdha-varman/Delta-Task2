@@ -1,0 +1,16 @@
+#!/bin/sh
+
+
+user=$(whoami)
+nl=$(cat /etc/crontab | grep -c 'nearest')
+if [ "$nl" -eq 0 ]
+then
+	echo "0  9  * * * $user nearest" | tee -a /etc/crontab >/dev/null 2>&1
+fi
+
+
+touch ~ChiefCommander/nearest10.txt
+
+Date=$(date -I -d "-1 day")
+
+awk 'FNR==NR{a[$2]=$3;next} {if(a[$2]=="YES" && substr($1,2,10)==Date && substr($2,1,4)=="Army") {N0=28.7041*3.141593/180; N1=substr($3,4)*3.141593/180; E0=77.1025*3.141593/180; E1=substr($4,4)*3.141593/180; x=sqrt((sin((N1-N0)/2))^2+cos(N0)*cos(N1)*(sin((E1-E0)/2))^2); print Date,$2,atan2(x,sqrt(1-x*x))}}' Date="$Date" attendance.log position.log | sort -g -k 3 | head -n 10 | awk '{print $1,$2}' | tee -a ~ChiefCommander/nearest10.txt  # >/dev/null 2>&1
